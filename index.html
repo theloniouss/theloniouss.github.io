@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>AFrame_AR-GUI</title>
+
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+
+    <script src="/src/ar-hit-test.js"></script>
+    <script src="/src/show-in-ar-mode.js"></script>
+    <script src="/src/hide-loading-screen.js"></script>
+    <script src="/src/switch-mode-button.js"></script>
+    <script src="/src/model-opacity.js"></script>
+    <script src="/src/enter-video.js"></script>
+
+    <link href="/style/basic.css" rel="stylesheet">
+
+    <!-- Automatic redirect to HTTPS in order to use WebXR functionalities -->
+    <script>
+        if (window.location.protocol == "http:" &&
+            window.location.hostname != "localhost" &&
+            window.location.hostname != "127.0.0.1" &&
+            window.location.hostname != "[::1]") {
+                window.location = window.location.href.replace('http:', 'https:');
+            }
+    </script>
+
+    <!-- Check if WebXR is available on this device -->
+    <script>
+        window.addEventListener('load', () => {
+          const WEBXR_SUPPORTED = navigator.xr && navigator.xr.isSessionSupported;
+          const HIT_TEST_SUPPORTED = window.XRSession && window.XRSession.prototype.requestHitTestSource;
+          if (!WEBXR_SUPPORTED || !HIT_TEST_SUPPORTED) {
+              document.getElementById('enter-ar-button').innerText = 'APP NOT SUPPORTED ON THIS DEVICE';
+              window.AR_MODE_SUPPORTED = false;
+          } else {
+              document.getElementById('enter-ar-button').innerText = 'ENTER AR';
+              window.AR_MODE_SUPPORTED = true;
+          }
+        });
+        window.isPlayingVideo = false;
+    </script>
+
+    <script>
+        window.addEventListener('load', () => {
+            let gui_elements = document.querySelectorAll('.gui_element');
+            gui_elements.forEach((elem) => {
+                elem.addEventListener('mouseup', (event) => {
+                    console.log(event.detail.intersection.point);
+                    event.preventDefault();
+                });
+            });
+        });
+        </script>
+</head>
+
+<body style="margin: 0; overflow: hidden;">
+    <div id="loadingScreen">
+       <img src="/images/logo.png" />
+       <button id="enter-ar-button" class="default-button"></button>
+    </div>
+
+    <a-scene loading-screen="enabled: false;" vr-mode-ui="enabled: false" webxr="requiredFeatures: hit-test, viewer, local-floor; optionalFeatures: dom-overlay; overlayElement: #overlay;" ar-hit-test>
+        <a-assets timeout=60000>
+            <video id="environment" preload="none" loop="true" src="/videos/Beach Sunrise - 360° Video.mp4"></video>
+            <a-asset-item id="door" src="/models/door_wood/scene.gltf"></a-asset-item>
+        </a-assets>
+
+        <a-entity camera="active: true; near: 0.004" look-controls
+                  cursor="rayOrigin: mouse; fuse: false"
+                  raycaster="far: 0.006; objects: .gui_element">
+
+            <!-- GUI -->
+            <a-entity class="gui_element" position="0 0 -0.005"
+                geometry="primitive: plane; width: 0.002; height: 0.0006"
+                material="color: #82A9C0"
+                text="wrapCount: 10; value: ENTER AR; align: center"></a-entity>
+        </a-entity>
+
+        <!-- Scene -->
+        <a-gltf-model id="animatedDoor" src="#door" scale="0.01 0.01 0.01" animation-mixer="timeScale: 0" model-opacity show-in-ar-mode></a-gltf-model>
+
+        <!-- <a-videosphere> added when user enters AR app and when video is loaded -->
+    </a-scene>
+
+    <div id="overlay">
+        <footer>
+            <button id="exit-ar-button" class="default-button" onclick="switchARMode()">
+                <img src="/images/x.svg" />
+            </button>
+        </footer>
+    </div>
+</body>
+
+</html>
+

@@ -5,7 +5,7 @@ let switchARMode = event => {
 
     if (scene.is('ar-mode')) {
         // Exit AR Mode
-        document.getElementById('overlay').style.display = 'none';
+        // document.getElementById('overlay').style.display = 'none';
         scene.style.display = 'none';
         scene.exitVR();
         document.getElementById('loadingScreen').style.display = 'flex';
@@ -14,10 +14,8 @@ let switchARMode = event => {
         document.getElementById('loadingScreen').style.display = 'none';
         scene.enterAR();
         scene.style.display = 'block';
-        document.getElementById('overlay').style.display = 'flex';
+        // document.getElementById('overlay').style.display = 'flex';
     }
 
-    if (event && (typeof event.cancelable !== 'boolean' || event.cancelable)) {
-        event.preventDefault();
-    }
+    if (event) event.stopPropagation();
 }

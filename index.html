@@ -14,7 +14,6 @@
     <script src="/src/hide-loading-screen.js"></script>
     <script src="/src/switch-mode-button.js"></script>
     <script src="/src/model-opacity.js"></script>
-    <script src="/src/enter-video.js"></script>
 
     <link href="/style/basic.css" rel="stylesheet">
 
@@ -41,20 +40,7 @@
               window.AR_MODE_SUPPORTED = true;
           }
         });
-        window.isPlayingVideo = false;
     </script>
-
-    <script>
-        window.addEventListener('load', () => {
-            let gui_elements = document.querySelectorAll('.gui_element');
-            gui_elements.forEach((elem) => {
-                elem.addEventListener('mouseup', (event) => {
-                    console.log(event.detail.intersection.point);
-                    event.preventDefault();
-                });
-            });
-        });
-        </script>
 </head>
 
 <body style="margin: 0; overflow: hidden;">
@@ -65,7 +51,6 @@
 
     <a-scene loading-screen="enabled: false;" vr-mode-ui="enabled: false" webxr="requiredFeatures: hit-test, viewer, local-floor; optionalFeatures: dom-overlay; overlayElement: #overlay;" ar-hit-test>
         <a-assets timeout=60000>
-            <video id="environment" preload="none" loop="true" src="/videos/Beach Sunrise - 360° Video.mp4"></video>
             <a-asset-item id="door" src="/models/door_wood/scene.gltf"></a-asset-item>
         </a-assets>
 
@@ -83,7 +68,6 @@
         <!-- Scene -->
         <a-gltf-model id="animatedDoor" src="#door" scale="0.01 0.01 0.01" animation-mixer="timeScale: 0" model-opacity show-in-ar-mode></a-gltf-model>
 
-        <!-- <a-videosphere> added when user enters AR app and when video is loaded -->
     </a-scene>
 
     <div id="overlay">

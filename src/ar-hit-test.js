@@ -9,29 +9,20 @@ AFRAME.registerComponent('ar-hit-test', {
             const renderer = this.el.sceneEl.renderer;
             const xrSession = this.session = renderer.xr.getSession();
 
-            // xrSession.addEventListener('select', () => {
-            //     let doorObj = document.getElementById('animatedDoor');
-            //     if (!this.data.hasAPose) {
-            //         this.data.hasAPose = true;
-            //         this.data.poseLocation = doorObj.object3D.position;
-            //         doorObj.setAttribute('animation-mixer', 'timeScale: 1');
-            //         doorObj.setAttribute('model-opacity', 1);
-            //     } else {
-            //         this.data.hasAPose = false;
-            //         this.data.poseLocation = {x: NaN, y: NaN, z: NaN};
-            //         doorObj.components['animation-mixer'].mixer.setTime(0);
-            //         doorObj.setAttribute('animation-mixer', 'timeScale: 0');
-            //         doorObj.setAttribute('model-opacity', 0.5);
-            //     }
-            // });
-
-            xrSession.addEventListener('crossDoor', () => {
+            xrSession.addEventListener('select', () => {
                 let doorObj = document.getElementById('animatedDoor');
-                this.data.hasAPose = false;
-                this.data.poseLocation = {x: NaN, y: NaN, z: NaN};
-                doorObj.components['animation-mixer'].mixer.setTime(0);
-                doorObj.setAttribute('animation-mixer', 'timeScale: 0');
-                doorObj.setAttribute('model-opacity', 0.5);
+                if (!this.data.hasAPose) {
+                    this.data.hasAPose = true;
+                    this.data.poseLocation = doorObj.object3D.position;
+                    doorObj.setAttribute('animation-mixer', 'timeScale: 1');
+                    doorObj.setAttribute('model-opacity', 1);
+                } else {
+                    this.data.hasAPose = false;
+                    this.data.poseLocation = {x: NaN, y: NaN, z: NaN};
+                    doorObj.components['animation-mixer'].mixer.setTime(0);
+                    doorObj.setAttribute('animation-mixer', 'timeScale: 0');
+                    doorObj.setAttribute('model-opacity', 0.5);
+                }
             });
 
             xrSession.requestReferenceSpace('viewer').then((viewerSpace) => {
@@ -75,17 +66,6 @@ AFRAME.registerComponent('ar-hit-test', {
                     if (!this.data.hasAPose) {
                         document.getElementById('animatedDoor').object3D.position.copy(newPos);
                         document.getElementById('animatedDoor').object3D.quaternion.copy(pose.transform.orientation);
-                    } else {
-                        var dist_x = (xrViewerPose.transform.position.x - this.data.poseLocation.x)**2;
-                        var dist_z = (xrViewerPose.transform.position.z - this.data.poseLocation.z)**2;
-                        let dist = Math.sqrt(dist_x + dist_z);
-                        if (dist <= 0.1) {  // 0.1 = 10cm
-                            // Start VR experience with videosphere
-                            window.isPlayingVideo = true;
-                            enterVideo();
-                            const event = new Event('crossDoor');
-                            this.session.dispatchEvent(event);
-                        }
                     }
                 }
             }

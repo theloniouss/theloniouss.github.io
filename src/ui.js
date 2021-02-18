@@ -1,6 +1,7 @@
 import { Button } from "/src/button.js";
 
-function UI () {
+// Singleton
+let ui = new function () {
     this.width = window.innerWidth;
     this.height = window.innerHeight;
 
@@ -19,35 +20,34 @@ function UI () {
     let planeGeometry = new THREE.PlaneGeometry(this.width, this.height);
     let plane = new THREE.Mesh(planeGeometry, material);
     this.uiScene.add(plane);
+
+    this.addElement = (elem) => {
+        this.uiElements.push(elem);
+    };
+
+    this.updateSize = () => {
+        if (window.innerWidth !== this.width
+            || window.innerHeight !== this.height) {
+            this.width = window.innerWidth;
+            this.height = window.innerHeight;
+            this.uiCamera.left = -this.width / 2;
+            this.uiCamera.right = this.width / 2;
+            this.uiCamera.top = this.height / 2;
+            this.uiCamera.bottom = -this.height / 2;
+            this.uiCamera.updateProjectionMatrix();
+        }
+    };
+
+    this.render = () => {
+        this.updateSize();
+        this.uiElements.forEach(elem => {
+            elem.update();
+            elem.draw();
+        });
+        this.uiRenderer.render(this.uiScene, this.uiCamera);
+        requestAnimationFrame(this.render);
+    };
 }
-
-UI.prototype.addElement = function (elem) {
-    this.uiElements.push(elem);
-};
-
-UI.prototype.updateSize = function () {
-    if (window.innerWidth !== this.width
-        || window.innerHeight !== this.height) {
-        this.width = window.innerWidth;
-        this.height = window.innerHeight;
-        this.uiCamera.left = -this.width / 2;
-        this.uiCamera.right = this.width / 2;
-        this.uiCamera.top = this.height / 2;
-        this.uiCamera.bottom = -this.height / 2;
-        this.uiCamera.updateProjectionMatrix();
-    }
-};
-
-UI.prototype.render = function () {
-    console.log(this);
-    this.updateSize();
-    this.uiElements.forEach(elem => {
-        elem.update();
-        elem.draw();
-    });
-    this.uiRenderer.render(this.uiScene, this.uiCamera);
-    requestAnimationFrame(window.ui.render);
-};
 
 
 function displayUI () {
@@ -69,8 +69,6 @@ document.querySelector('#ui').addEventListener('touchend', () => {
     window.SCREEN_IS_TOUCHED = false;
 });
 
-window.ui = new UI();
-
 var playButton = new Button(50, 50, 100, 50, ui.uiContext, 'Play',
     {
         'default': {
@@ -90,6 +88,5 @@ var playButton = new Button(50, 50, 100, 50, ui.uiContext, 'Play',
     }
 );
 
-console.log(window.ui);
-window.ui.addElement(playButton);
-requestAnimationFrame(window.ui.render);
+ui.addElement(playButton);
+requestAnimationFrame(ui.render);

@@ -31,4 +31,5 @@ window.addEventListener('load', () => {
     }
 
     button.style.display = 'block';
+    console.log('truc');
 });

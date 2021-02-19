@@ -6,13 +6,27 @@
     --backgroud-color: linear-gradient(#d4d4d4, #82a9c0);
 }
 
+html {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+	margin: 0;
+	overscroll-behavior: none;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+}
+
 .default-button {
     background-color: #82a9c0;
     border: none;
     color: #dfdfdf;
-    border-radius: 10px;
+    border-radius: 15px;
     font-family: sans-serif;
-    font-size: large;
+    font-size: 5vw;
+    padding: 1vh 2.5vw 1vh 2.5vw;
 }
 
 .default-button img {

@@ -1,26 +1,32 @@
-function switchARMode (sessionFeatures = {requiredFeatures: ['hit-test']}) {
+function switchARMode () {
     if (!window.AR_MODE_SUPPORTED) return;
 
-    if (GLOBAL_VAR.currentSession === null) {
-        navigator.xr.requestSession('immersive-ar', sessionFeatures).then(onSessionStarted);
-    } else {
-        GLOBAL_VAR.currentSession.end();
-    }
-
-
-    if (scene.is('ar-mode')) {
+    if (currentSession !== null) {
         // Exit AR Mode
-        // document.getElementById('overlay').style.display = 'none';
-        scene.style.display = 'none';
-        scene.exitVR();
-        document.getElementById('loadingScreen').style.display = 'flex';
+        currentSession.end();
+        document.querySelector('#renderCanvas').style.display = 'none';
+        document.querySelector('#loadingScreen').style.display = 'flex';
     } else {
         // Enter AR Mode
-        document.getElementById('loadingScreen').style.display = 'none';
-        scene.enterAR();
-        scene.style.display = 'block';
-        // document.getElementById('overlay').style.display = 'flex';
+        document.querySelector('#loadingScreen').style.display = 'none';
+        document.querySelector('#renderCanvas').style.display = 'block';
+        let xrInit = { requiredFeatures: ['hit-test'] };
+        navigator.xr.requestSession('immersive-ar', xrInit)
+                    .then(onXRSessionStart);
     }
+}
 
-    if (event) event.stopPropagation();
+
+async function onXRSessionStart (xrSession) {
+    xrSession.addEventListener('end', onXRSessionEnd);
+    renderer.xr.setReferenceSpaceType('local');
+    await renderer.xr.setSession(xrSession);
+    currentSession = xrSession;
+}
+
+
+function onXRSessionEnd () {
+    currentSession.removeEventListener('end', onXRSessionEnd);
+    currentSession = null;
+    xrHitTestSource = null;
 }

@@ -13,27 +13,40 @@
             window.location.hostname != "127.0.0.1" &&
             window.location.hostname != "[::1]") {
                 window.location = window.location.href.replace('http:', 'https:');
-            }
+        }
+
+        // GLOBAL VARIABLES
+        var renderer, GLrenderer, scene, ui;
+        var xrHitTestSource = null;
+        var currentSession = null;
     </script>
 
     <!-- <script src="src/ar-hit-test.js"></script>
     <script src="src/show-in-ar-mode.js"></script>
     <script src="src/hide-loading-screen.js"></script>
     <script src="src/switch-mode-button.js"></script>
-    <script src="src/model-opacity.js"></script> -->
-    <!-- <script src="src/ui.js" type="module"></script> -->
+    <script src="src/model-opacity.js"></script>
+    <script src="src/ui.js" type="module"></script> -->
 
     <script src="/src/test_support.js" type="module"></script>
     <script src="/src/render.js" type="module"></script>
+    <script src="src/ar-button.js"></script>
 
     <link href="style/basic.css" rel="stylesheet">
 
 </head>
 
-<body style="margin: 0; overflow: hidden;">
-    <!-- <div id="loadingScreen">
+<body>
+    <div id="loadingScreen">
        <img src="/images/logo.png" />
-       <button id="enter-ar-button" class="default-button"></button>
+       <button id="enter-ar-button" class="default-button" onclick="switchARMode()"></button>
+    </div>
+
+    <!-- <div id="uiCanvas" style="position: absolute;">
+        <button id="exit-ar-button" class="default-button" onclick="switchARMode()"></button>
+        <footer>
+            <img src="/images/logo.png" />
+        </footer>
     </div> -->
 </body>
 

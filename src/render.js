@@ -1,10 +1,11 @@
 import * as THREE from 'https://unpkg.com/three@0.125.0/build/three.module.js';
-
-let GLOBAL_VAR = {xrHitTestSource: null, currentSession: null};
+import { Button } from "./ui-elements.js";
 
 
 function init () {
     let container = document.createElement('div');
+    container.setAttribute('id', 'renderCanvas');
+    container.style.display = 'none';
     document.body.appendChild(container);
 
     let width = window.innerWidth || container.clientWidth;
@@ -13,64 +14,44 @@ function init () {
     initScene(width, height);
     initUserInterface(width, height);
 
-    GLOBAL_VAR.scene.userData.element = container;
+    scene.userData.element = container;
 
     window.addEventListener('resize', updateSize, false);
 
-    GLOBAL_VAR.renderer = new THREE.WebGLRenderer({container, antialias: true, alpha: true, premultipliedAlpha: false});
-    GLOBAL_VAR.renderer.setPixelRatio(window.devicePixelRatio);
-    GLOBAL_VAR.renderer.setSize(width, height);
-    GLOBAL_VAR.renderer.autoClear = false;
-    GLOBAL_VAR.renderer.xr.enabled = true;
+    renderer = new THREE.WebGLRenderer({container, antialias: true, alpha: true, premultipliedAlpha: false});
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(width, height);
+    renderer.autoClear = false;
+    renderer.xr.enabled = true;
 
-    xrFeatures = {
-        requiredFeatures: ['hit-test'],
-        optionalFeatures: []
-    };
-    navigator.xr.requestSession('immersive-ar', xrFeatures).then(xrSession => {
-        // GLOBAL_VAR.renderer.xr.setReferenceSpaceType('local');
-        xrSession.addEventListener('end', function () {
-            GLOBAL_VAR.currentSession.removeEventListener('end');
-            GLOBAL_VAR.currentSession = null;
-            GLOBAL_VAR.xrHitTestSource = null;
-        });
-        await renderer.xr.setSession(xrSession);
-        GLOBAL_VAR.currentSession = xrSession;
-    });
+    GLrenderer = new THREE.WebGLRenderer({container, antialias: true, alpha: true, premultipliedAlpha: false});
+    GLrenderer.setPixelRatio(window.devicePixelRatio);
+    GLrenderer.setSize(width, height);
+    GLrenderer.autoClear = false;
 
-    let controller = GLOBAL_VAR.renderer.xr.getController(0);
+    let controller = renderer.xr.getController(0);
     controller.addEventListener('select', onSelect);
-    GLOBAL_VAR.scene.add(controller);
+    scene.add(controller);
 
-    async function onSessionStarted(session) {
-        session.addEventListener('end', onSessionEnded );
-        renderer.xr.setReferenceSpaceType( 'local' );
-        await renderer.xr.setSession( session );
-        GLOBAL_VAR.currentSession = session;
-    }
-
-    GLOBAL_VAR.renderer.xr.addEventListener('sessionstart', _ => {
-        console.log('yas');
-        let xrSession = GLOBAL_VAR.renderer.xr.getSession();
+    renderer.xr.addEventListener('sessionstart', () => {
+        let xrSession = renderer.xr.getSession();
         xrSession.requestReferenceSpace('viewer').then(xrViewerSpace => {
             xrSession.requestHitTestSource({space: xrViewerSpace}).then(src => {
                 xrHitTestSource = src;
             });
         });
-
-
     });
 }
 
 
 function initScene (width, height) {
-    GLOBAL_VAR.scene = new THREE.Scene();
+    scene = new THREE.Scene();
     const scCamera = new THREE.PerspectiveCamera(70, width / height, 0.01, 100);
-    GLOBAL_VAR.scene.userData.camera = scCamera;
+    scene.userData.camera = scCamera;
 
     const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
     light.position.set(0.5, 1, 0.25);
-    GLOBAL_VAR.scene.add(light);
+    scene.add(light);
 
     let reticle = new THREE.Mesh(
         new THREE.RingGeometry(0.15, 0.2, 32).rotateX(-Math.PI / 2),
@@ -79,82 +60,119 @@ function initScene (width, height) {
     reticle.matrixAutoUpdate = false;
     reticle.visible = false;
     reticle.name = 'xrReticle';
-    GLOBAL_VAR.scene.add(reticle);
+    scene.add(reticle);
 }
 
 
 function initUserInterface (width, height) {
     // User Interface
-    // ui = new THREE.Scene();
-    // const uiCamera = new THREE.OrthographicCamera(-width/2, width/2,
-    //                                               height/2, -height/2, 0, 1);
+    ui = new THREE.Scene();
+    const uiCamera = new THREE.OrthographicCamera(-width/2, width/2,
+                                                  height/2, -height/2, 0, 1);
+    uiCamera.position.set(0, 0, 0);
+    uiCamera.lookAt(0, 0, -0.5);
+
+    // UI elements
+    const group = new THREE.Group();
+    group.name = 'uiElements';
+    group.position.set(0, 0, -0.5);
+
+    let button = Button(0.1, 0.1);
+    group.add(button);
+
+    let button2 = Button(0.1, 0.1);
+    button2.position.set(0, 0.2, 0);
+    group.add(button2);
+
+    let button3 = Button(0.1, 0.1);
+    button3.position.set(0, -0.2, 0);
+    group.add(button3);
+
+    let button4 = Button(0.1, 0.1);
+    button4.position.set(-0.2, 0, 0);
+    group.add(button4);
+
+    let button5 = Button(0.1, 0.1);
+    button5.position.set(0.2, 0, 0);
+    group.add(button5);
+
+    ui.add(group);
+
+    ui.userData.camera = uiCamera;
 }
 
 
 function updateSize () {
-    const wWidth = window.innerWidth || GLOBAL_VAR.scene.userData.element.clientWidth;
-    const wHeight = window.innerHeight || GLOBAL_VAR.scene.userData.element.clientHeight;
+    const wWidth = window.innerWidth || scene.userData.element.clientWidth;
+    const wHeight = window.innerHeight || scene.userData.element.clientHeight;
 
-    GLOBAL_VAR.renderer.setSize(wWidth, wHeight, false);
+    renderer.setSize(wWidth, wHeight, false);
+    renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
 
-    GLOBAL_VAR.scene.userData.camera.aspect = wWidth / wHeight;
-    GLOBAL_VAR.scene.userData.camera.updateProjectionMatrix();
+    scene.userData.camera.aspect = wWidth / wHeight;
+    scene.userData.camera.updateProjectionMatrix();
 
-    GLOBAL_VAR.ui.userData.camera.left = -wWidth / 2;
-    GLOBAL_VAR.ui.userData.camera.right = wWidth / 2;
-    GLOBAL_VAR.ui.userData.camera.top = wHeight / 2;
-    GLOBAL_VAR.ui.userData.camera.bottom = -wHeight / 2;
-    GLOBAL_VAR.ui.userData.camera.updateProjectionMatrix();
+    // ui.userData.camera.left = -wWidth / 2;
+    // ui.userData.camera.right = wWidth / 2;
+    // ui.userData.camera.top = wHeight / 2;
+    // ui.userData.camera.bottom = -wHeight / 2;
+    // ui.userData.camera.updateProjectionMatrix();
 }
 
 
 function onSelect () {
-    let reticle = GLOBAL_VAR.scene.getObjectByName('xrReticle');
+    let reticle = scene.getObjectByName('xrReticle');
     if (reticle.visible) {
+        const geometry = new THREE.CylinderGeometry( 0.1, 0.1, 0.2, 32 ).translate( 0, 0.1, 0 );
         const material = new THREE.MeshPhongMaterial({ color: 0xffffff * Math.random() });
         const mesh = new THREE.Mesh(geometry, material);
         mesh.position.setFromMatrixPosition(reticle.matrix);
         mesh.scale.y = Math.random() * 2 + 1;
-        GLOBAL_VAR.scene.add(mesh);
+        scene.add(mesh);
     }
 }
 
 
 function render (currentFrameTime, frame) {
-    // console.log(GLOBAL_VAR.xrHitTestSource, GLOBAL_VAR.renderer.xr.isPresenting);
-    if (GLOBAL_VAR.xrHitTestSource !== null && GLOBAL_VAR.renderer.xr.isPresenting) {
-        const xrRefSpace = GLOBAL_VAR.renderer.xr.getReferenceSpace();
-        const xrHitTestResults = frame.getHitTestResults(GLOBAL_VAR.xrHitTestSource);
-        let reticle = GLOBAL_VAR.scene.getObjectByName('xrReticle');
+    const xrRefSpace = renderer.xr.getReferenceSpace();
+    const xrHitTestResults = frame.getHitTestResults(xrHitTestSource);
+    let reticle = scene.getObjectByName('xrReticle');
 
-        if (xrHitTestResults.length > 0) {
-            const hit = xrHitTestResults[0];
-            reticle.matrix.fromArray(hit.getPose(xrRefSpace).transform.matrix);
-            reticle.visible = true;
-        } else {
-            reticle.visible = false;
-        }
+    if (xrHitTestResults.length > 0) {
+        const hit = xrHitTestResults[0];
+        reticle.matrix.fromArray(hit.getPose(xrRefSpace).transform.matrix);
+        reticle.visible = true;
+    } else {
+        reticle.visible = false;
+    }
 
-        GLOBAL_VAR.renderer.clear();
-        GLOBAL_VAR.renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
+    // render scene
+    renderer.clear();
+    renderer.render(scene, scene.userData.camera);
 
-        // render scene
-        GLOBAL_VAR.renderer.render(GLOBAL_VAR.scene, GLOBAL_VAR.scene.userData.camera);
+    // renderer.clearDepth();
 
-        GLOBAL_VAR.renderer.clearDepth();
+    // render ui
+    GLrenderer.clear();
+    GLrenderer.render(ui, ui.userData.camera);
+}
 
-        // render ui
-        // GLOBAL_VAR.renderer.render(GLOBAL_VAR.ui, GLOBAL_VAR.ui.userData.camera);
+
+function animate (currentFrameTime, frame) {
+    if (xrHitTestSource !== null && renderer.xr.isPresenting) {
+        // Update UI position/rotation
+        // ui.userData.camera.position.copy(scene.userData.camera.position);
+        // ui.getObjectByName('uiElements').quaternion.copy(scene.userData.camera.quaternion);
+        // ui.getObjectByName('uiElements').position.copy(scene.userData.camera.position);
+        // ui.getObjectByName('uiElements').translateZ(-1);
+
+        render(currentFrameTime, frame);
     }
 }
 
 
-function animate () {
-    GLOBAL_VAR.renderer.setAnimationLoop(render);
-}
-
-
-window.addEventListener('appSupported', _ => {
+window.addEventListener('appSupported', () => {
     init();
-    animate();
+    // animate();
+    renderer.setAnimationLoop(animate);
 });

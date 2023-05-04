@@ -1,53 +1,126 @@
 <!DOCTYPE html>
 <html>
-
 <head>
+	<title>Sardines à vélo</title>
+    <link rel="icon" type="image/x-icon" href="/img/tool.svg">
+	<link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter">
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>ThreeJS_AR-GUI</title>
-
-    <!-- Automatic redirect to HTTPS in order to use WebXR functionalities -->
-    <script>
-        if (window.location.protocol == "http:" &&
-            window.location.hostname != "localhost" &&
-            window.location.hostname != "127.0.0.1" &&
-            window.location.hostname != "[::1]") {
-                window.location = window.location.href.replace('http:', 'https:');
-        }
-
-        // GLOBAL VARIABLES
-        var renderer, GLrenderer, scene, ui;
-        var xrHitTestSource = null;
-        var currentSession = null;
-    </script>
-
-    <!-- <script src="src/ar-hit-test.js"></script>
-    <script src="src/show-in-ar-mode.js"></script>
-    <script src="src/hide-loading-screen.js"></script>
-    <script src="src/switch-mode-button.js"></script>
-    <script src="src/model-opacity.js"></script>
-    <script src="src/ui.js" type="module"></script> -->
-
-    <script src="/src/test_support.js" type="module"></script>
-    <script src="/src/render.js" type="module"></script>
-    <script src="src/ar-button.js"></script>
-
-    <link href="style/basic.css" rel="stylesheet">
-
-</head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link   rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+            integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+            crossorigin=""/></head>
 
 <body>
-    <div id="loadingScreen">
-       <img src="/images/logo.png" />
-       <button id="enter-ar-button" class="default-button" onclick="switchARMode()"></button>
-    </div>
+	<nav>
+        <img src="/img/icon_squared.jpg" id="logo">
+		<ul>
+            <div class="containerNav">
+                <li class="sectionLinkButton"><a href="#section1">→ Quel genre de poissons sommes-nous ?</a></li>
+            </div>
+            <div class="containerNav">
+                <li class="sectionLinkButton"><a href="#section2">→ Notre boutique, tout ce qui brille !</a></li>
+            </div>
+            <div class="containerNav">
+                <li class="sectionLinkButton"><a href="#section3">→ Notre atelier, où tout s'entretient !</a></li>
+            </div>
+            <div class="containerNav">
+                <li class="sectionLinkButton"><a href="#section4">→ Contactez-nous</a></li>
+            </div>
+		</ul>
+	</nav>
+	
+	<main>
+        <h1>Sardines à Vélo</h1>
 
-    <!-- <div id="uiCanvas" style="position: absolute;">
-        <button id="exit-ar-button" class="default-button" onclick="switchARMode()"></button>
+		<section id="section1">
+			<h2>→ L'équipe des Sardines</h2>
+            <img src="/img/icon.jpg" alt="L'équipe au complet">
+			<p>On est des cyclistes passionnés de voyages à vélo et cyclistes au quotidien.</p>
+            <p>Les sardines ont décidé de sortir de la boîte pour vivre et se déplacer en liberté !</p>
+            <p>On est des sardines à vélo pour pouvoir vivre des expériences en pédalant…</p>
+            <p>Dans le fond de nos sacoches il y a toujours une petite boîte de sardines pour remplir nos estomacs pendant les voyages et quelques sardines de tente !</p>
+		</section>
+		
+		<section id="section2">
+			<h2>→ Notre boutique</h2>
+            <img src="/img/shop-front.png" alt="La devanture de notre boutique">
+			<p>Chez Sardines à Vélo on vous propose des vélos de randonnée, urbains, à assistance électrique, de type cargo et pour les enfants.</p>
+            <p>On est une boutique spécialisée et on aime bien vous accompagner dans la préparation de votre voyage: vous aider à choisir votre voyageuse et les accessoires utiles pendant votre aventure.</p>
+            <p>Nous avons des accessoires comme les sacoches Ortlieb®, les porte-bagages Tubus®, les casques et antivols Abus®, les selles Brooks® ou SMP®, et bien d’autres encore.</p>
+            <p>Venez nous voir, on sera ravis de vous conseiller !</p>
+            <p>Horaires :</p>
+            <p>Du mardi au vendredi, de 10h00 à 12h30 et de 14h00 à 19h00.</p>
+            <p>Le samedi, de 10h00 à 12h30 et de 14h00 à 18h00.</p>
+            <p>Adresse :</p>
+            <p>La boutique est au 13 Bd de la Prairie au Duc, 44200 Nantes</p>
+		</section>
+		
+		<section id="section3">
+			<h2>→ Notre atelier</h2>
+            <img src="/img/tool.jpg" alt="Photo de notre atelier">
+			<p>Dans notre atelier, tous les vélos sont bienvenus. Récents, anciens, simple ou cargos à assistance électrique, Dutch & German bikes welcome. Et on oubliait, aussi le polobike ! On réalise des rayonnages au quotidien.</p>
+            <p>Toutes les opérations de maintenance sont planifiées sur rendez-vous au 09 81 67 30 60. Pensez à nous appeler avant de venir avec votre vélo, même pour une simple crevaison.</p>
+            <p>On établit en général un premier diagnostic afin d’estimer les coûts de réparation. Le devis est exhaustif et les opérations classées par ordre de priorité. Vous choisissez de réaliser tout ou partie de notre devis.</p>
+            <p>On est formés, certifiés et possédons les outils dédiés à la maintenances des moyeux Rohloff Speedhub, Shimano Alfine, et des motorisations Bosch, Impulse et Yamaha.</p>
+            <p>Horaires:</p>
+            <p>Du mardi au vendredi, de 10h00 à 12h30 et de 14h00 à 19h00.</p>
+            <p>Le samedi, de 10h00 à 12h30 et de 14h00 à 18h00.</p>
+            <p>Prise de rendez-vous au 09 81 67 30 60.</p>
+		</section>
+		
+		<section id="section4">
+			<h2>→ Contactez-nous</h2>
+            <div id="Map"></div>
+            <p>La Boutique : <a href="tel:0251723742" alt="Numéro de téléphone de la boutique : 0251723742">02 51 72 37 42</a></p>
+            <p>L'Atelier : <a href="tel:0981673060" alt="Numéro de téléphone de l'atelier : 0251723742">09 81 67 30 60</a></p>
+            <p>Email : <a href="mailto:info@sardinesavelo.com">info@sardinesavelo.com</a></p>
+            <p>
+                <a href="https://www.facebook.com/sardinesavelo/"><img src="img/facebook.svg"></a>
+                <a href="https://www.instagram.com/sardinesavelo/"><img src="img/instagram.svg"></a>
+                <a href="https://twitter.com/sardinesavelo"><img src="img/twitter.svg"></a>
+            </p>
+		</section>
+        
         <footer>
-            <img src="/images/logo.png" />
+            <p>&copy; gweil / 2023 / All Rights Reserved.</p>
         </footer>
-    </div> -->
-</body>
+    </main>
+	
 
+
+    <!-- Scripts for the map -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js" crossorigin=""></script>
+    <script>
+		// Define the map options
+		var mapOptions = {
+			center: [47.20564, -1.55534],
+			zoom: 17
+		};
+		
+		// Create the map object
+		var map = L.map('Map', mapOptions);
+		
+		// Add the OpenStreetMap tile layer
+		var tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			maxZoom: 19,
+			attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+				'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+				'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>'
+		}).addTo(map);
+		
+		// Define the marker coordinates
+		var marker1Coords = [47.20492, -1.5569];
+		var marker2Coords = [47.20648, -1.55417];
+		
+		// Create the marker objects
+		var marker1 = L.marker(marker1Coords).addTo(map);
+		var marker2 = L.marker(marker2Coords).addTo(map);
+		
+		// Create a marker popup for each marker
+		marker1.bindPopup("La Boutique", {autoClose:false, closeOnClick:false}).openPopup();
+		marker2.bindPopup("L'Atelier", {autoClose:false, closeOnClick:false}).openPopup();
+	</script>
+</body>
 </html>

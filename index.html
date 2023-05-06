@@ -3,13 +3,15 @@
 <head>
 	<title>Sardines à vélo</title>
     <link rel="icon" type="image/x-icon" href="/img/tool.svg">
-	<link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter">
+	<link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter|Rampart+One">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link   rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
             integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
-            crossorigin=""/></head>
+            crossorigin=""/>
+    <link rel="stylesheet" href="/dist/owlcarousel/owl.carousel.min.css">
+</head>
 
 <body>
 	<nav>
@@ -49,6 +51,24 @@
             <p>On est une boutique spécialisée et on aime bien vous accompagner dans la préparation de votre voyage: vous aider à choisir votre voyageuse et les accessoires utiles pendant votre aventure.</p>
             <p>Nous avons des accessoires comme les sacoches Ortlieb®, les porte-bagages Tubus®, les casques et antivols Abus®, les selles Brooks® ou SMP®, et bien d’autres encore.</p>
             <p>Venez nous voir, on sera ravis de vous conseiller !</p>
+            <div class="owl-carousel">
+                <img src="/img/cinelli.jpg" alt="Image 1">
+                <img src="/img/ABUS-Logo.png" alt="Image 2">
+                <img src="/img/bicicapace-logo.png" alt="Image 3">
+                <img src="/img/Ortlieb-logo.jpeg" alt="Image 4">
+                <img src="/img/cinelli.jpg" alt="Image 1">
+                <img src="/img/ABUS-Logo.png" alt="Image 2">
+                <img src="/img/bicicapace-logo.png" alt="Image 3">
+                <img src="/img/Ortlieb-logo.jpeg" alt="Image 4">
+                <img src="/img/cinelli.jpg" alt="Image 1">
+                <img src="/img/ABUS-Logo.png" alt="Image 2">
+                <img src="/img/bicicapace-logo.png" alt="Image 3">
+                <img src="/img/Ortlieb-logo.jpeg" alt="Image 4">
+                <img src="/img/cinelli.jpg" alt="Image 1">
+                <img src="/img/ABUS-Logo.png" alt="Image 2">
+                <img src="/img/bicicapace-logo.png" alt="Image 3">
+                <img src="/img/Ortlieb-logo.jpeg" alt="Image 4">
+            </div>              
             <p>Horaires :</p>
             <p>Du mardi au vendredi, de 10h00 à 12h30 et de 14h00 à 19h00.</p>
             <p>Le samedi, de 10h00 à 12h30 et de 14h00 à 18h00.</p>
@@ -89,9 +109,11 @@
 	
 
 
-    <!-- Scripts for the map -->
+    <!-- Scripts -->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js" crossorigin=""></script>
+    <script src="/dist/jquery-3.6.4.min.js"></script>
+    <script src="/dist/owlcarousel/owl.carousel.min.js"></script>
     <script>
 		// Define the map options
 		var mapOptions = {
@@ -119,8 +141,19 @@
 		var marker2 = L.marker(marker2Coords).addTo(map);
 		
 		// Create a marker popup for each marker
-		marker1.bindPopup("La Boutique", {autoClose:false, closeOnClick:false}).openPopup();
-		marker2.bindPopup("L'Atelier", {autoClose:false, closeOnClick:false}).openPopup();
+		marker1.bindPopup("<b>La Boutique</b>", {autoClose:false, closeOnClick:false}).openPopup();
+		marker2.bindPopup("<b>L'Atelier</b>", {autoClose:false, closeOnClick:false}).openPopup();
 	</script>
+
+    <script>
+        $('.owl-carousel').owlCarousel({
+            loop: true,
+            nav: false,
+            autoplay: true,
+            autoplayTimeout: 1500,
+            autoplayHoverPause: false,
+            items: 4
+        })
+    </script>
 </body>
 </html>
